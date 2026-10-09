@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cash Flow</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#09090D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%20%20%3Cdefs%3E%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239B8AFB%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%237C6CF2%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%234FD1C5%22/%3E%3C/linearGradient%3E%20%20%20%20%3ClinearGradient%20id%3D%22s%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%22.35%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220%22/%3E%3C/linearGradient%3E%20%20%3C/defs%3E%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2218%22%20fill%3D%22url%28%23g%29%22/%3E%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2218%22%20fill%3D%22url%28%23s%29%22/%3E%20%20%3Cpath%20d%3D%22M30%2020.5a11.5%2011.5%200%201%200%200%2023%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22/%3E%20%20%3Cpath%20d%3D%22M37%2043.5V20.5h11M37%2032h8%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%20%20%3Ccircle%20cx%3D%2251%22%20cy%3D%2244%22%20r%3D%223.6%22%20fill%3D%22%23fff%22/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%20%20%3Cdefs%3E%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%239B8AFB%22/%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%237C6CF2%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%234FD1C5%22/%3E%3C/linearGradient%3E%20%20%20%20%3ClinearGradient%20id%3D%22s%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%22.35%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23fff%22%20stop-opacity%3D%220%22/%3E%3C/linearGradient%3E%20%20%3C/defs%3E%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2218%22%20fill%3D%22url%28%23g%29%22/%3E%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2218%22%20fill%3D%22url%28%23s%29%22/%3E%20%20%3Cpath%20d%3D%22M30%2020.5a11.5%2011.5%200%201%200%200%2023%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22/%3E%20%20%3Cpath%20d%3D%22M37%2043.5V20.5h11M37%2032h8%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%20%20%3Ccircle%20cx%3D%2251%22%20cy%3D%2244%22%20r%3D%223.6%22%20fill%3D%22%23fff%22/%3E%3C/svg%3E">
+
+
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="hrow">
+    <div class="brand"><div class="logo"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9B8AFB"/><stop offset=".55" stop-color="#7C6CF2"/><stop offset="1" stop-color="#4FD1C5"/></linearGradient>
+    <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#lg1)"/>
+  <rect width="64" height="64" rx="18" fill="url(#lg2)"/>
+  <path d="M30 20.5a11.5 11.5 0 1 0 0 23" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M37 43.5V20.5h11M37 32h8" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="51" cy="44" r="3.6" fill="#fff"/>
+</svg></div>
+      <div><h1>Cash Flow</h1><div class="save"><button class="pchip" id="profB" aria-haspopup="dialog"></button><span class="sep">·</span><span id="save">Loading…</span></div></div></div>
+    <div class="acts"><button class="ibtn sq" id="thB" aria-label="Switch light or dark"><svg class="i sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button><button class="ibtn" id="syncB" aria-label="Sync"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 19H7a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 11 4 4 0 0 1 17.5 19z"/></svg><span class="dot"></span><span class="tx">Sync devices</span></button><button class="ibtn" id="setB" aria-haspopup="dialog" aria-label="Settings"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="badge-dot" hidden></span><span class="tx">Settings</span></button></div>
+  </div>
+  <div class="hrow2">
+    <div class="seg" id="view"><span class="pill" aria-hidden="true"></span><button data-v="m" class="on">Month</button><button data-v="q">Quarter</button><button data-v="y">Year</button><button data-v="a">All</button></div>
+    <div class="navi"><button id="prev" aria-label="Previous">‹</button><b id="navL"></b><button id="next" aria-label="Next">›</button></div>
+  </div>
+  <nav id="tabs"><span class="ind" aria-hidden="true"></span>
+    <button data-t="ov" class="on">Overview</button><button data-t="lr">📚 Learn</button><button data-t="rd">Rich Dad view</button><button data-t="as">My assets</button><button data-t="go">Goals</button><button data-t="lg">Months</button><button data-t="zk">Zakat</button><button data-t="pj">Projection</button><button data-t="al">Savings plan</button><button data-t="gr">Grow assets</button>
+  </nav>
+</header>
+
+<section class="tab on" id="ov">
+  <div class="trust" id="trust"><div class="tr-ic">🔒</div><div class="tr-tx"><b id="trT">Your data stays on this device</b><p id="trP"></p>
+    <div class="tr-pts"><span>✓ No account needed</span><span>✓ No server, no tracking</span><span>✓ Never shared or sold</span><span>✓ Even we can't see it</span></div></div>
+    <div class="tr-act"><button class="btn ghost sm" id="trMore">Where exactly?</button><button class="gx" id="trX" aria-label="Make smaller">–</button></div></div>
+  <div class="panel welcome" id="ovWel" hidden><h2>👋 Welcome to Cash Flow</h2><p class="hint">Your money, your plan. Start with these three steps. Everything stays on this device.</p>
+   <div class="wsteps"><button data-go="lg"><b>1</b><span><strong>Log this month</strong><small>Income, expenses, giving</small></span></button>
+   <button data-go="as"><b>2</b><span><strong>Add what you own</strong><small>Property, business, apps, savings</small></span></button>
+   <button data-go="lr"><b>3</b><span><strong>Write your purpose</strong><small>And follow the 10-step guide</small></span></button></div></div>
+  <div class="hero">
+    <div class="ringwrap"><div class="ring"><svg width="170" height="170" viewBox="0 0 170 170"><circle class="track" cx="85" cy="85" r="74" fill="none" stroke-width="12"/><circle class="prog" id="ringP" cx="85" cy="85" r="74" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465"/></svg>
+      <div class="ctr"><div><b id="ringV">0%</b><small>Freedom</small></div></div></div><p class="ringcap">of your expenses paid<br>by passive income</p></div>
+    <div><h2 id="heroT"></h2><p id="heroP"></p></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><span>Income</span><b id="sIn">0</b></div>
+    <div class="stat"><span>Expenses</span><b id="sEx">0</b></div>
+    <div class="stat"><span>Zakat + sadaqah</span><b id="sGv">0</b></div>
+    <div class="stat"><span>Saved</span><b id="sSv">0</b></div>
+    <div class="stat"><span>Savings rate</span><b id="sRt">0%</b></div>
+  </div>
+  <button class="savecard" id="ovSave" hidden><span></span><em>See how →</em></button>
+  <div class="panel nx" id="ovNext"><div class="nx-top"><div><small>📚 Your path to financial freedom</small><h2 class="nx-t"></h2><p class="nx-n"></p></div><button class="btn">Open guide →</button></div>
+   <div class="nx-bar"><i></i></div><div class="nx-foot"><span class="nx-p"></span><span class="nx-q">💡 <span id="dPrin"></span></span></div>
+   <p class="nx-pur" hidden>🎯 <span></span></p></div>
+  <div class="grid g2">
+    <div class="panel"><h2 id="trendT">Month by month</h2><div class="chart tall"><canvas id="cTr"></canvas></div></div>
+    <div class="panel"><h2>Where the money went</h2><div class="chart tall"><canvas id="cPie"></canvas></div></div>
+    <div class="panel"><h2>Net worth history</h2><p class="hint" id="nwhS"></p><div class="chart"><canvas id="cNWH"></canvas></div></div>
+    <div class="panel wide-row"><h2>Expenses by category</h2><div class="tw"><table id="catT" class="rtab"></table></div></div>
+    <div class="panel wide-row"><h2>Year by year</h2><div class="tw"><table id="yrT" class="rtab"></table></div></div>
+  </div>
+</section>
+
+<section class="tab" id="rd">
+  <div class="grid rdtop">
+    <div class="panel"><span class="pat" id="rdPat"></span><h2 id="rdT"></h2><p class="hint" id="rdP" style="margin-top:6px"></p>
+      <div class="kv"><span>Net worth</span><b id="rdNW"></b></div>
+      <div class="kv"><span>Asset income / month</span><b id="rdAI" class="pos"></b></div>
+      <div class="kv"><span>Debt payments / month</span><b id="rdLP" class="neg"></b></div>
+      <div class="kv"><span>Cash flow after everything</span><b id="rdCF"></b></div></div>
+    <div class="panel"><h2>Where your money flows</h2><p class="hint">Highlighted arrows show your current pattern. "Your work" means a job, business or freelancing.</p>
+      <svg class="dg" viewBox="0 0 600 300" style="width:100%;height:auto" role="img" aria-label="Cash flow pattern diagram">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--gold)"/></marker></defs>
+        <rect class="bx" x="4" y="110" width="84" height="52" rx="10"/><text class="t" x="46" y="134" text-anchor="middle">Your</text><text class="t" x="46" y="150" text-anchor="middle">work</text>
+        <text class="m" x="230" y="20" text-anchor="middle">INCOME STATEMENT</text><text class="m" x="480" y="20" text-anchor="middle">BALANCE SHEET</text>
+        <rect class="bx" id="bxI" x="130" y="30" width="200" height="90" rx="12"/><text class="t" x="146" y="58">Income</text><text id="dI" x="146" y="82"></text><text class="m" id="dI2" x="146" y="104"></text>
+        <rect class="bx" id="bxE" x="130" y="185" width="200" height="90" rx="12"/><text class="t" x="146" y="213">Expenses</text><text id="dE" x="146" y="237"></text><text class="m" x="146" y="259">incl. giving</text>
+        <rect class="bx" id="bxA" x="380" y="30" width="200" height="90" rx="12"/><text class="t" x="396" y="58">Assets</text><text id="dA" x="396" y="82"></text><text class="m" x="396" y="104">put money in</text>
+        <rect class="bx" id="bxL" x="380" y="185" width="200" height="90" rx="12"/><text class="t" x="396" y="213">Liabilities</text><text id="dL" x="396" y="237"></text><text class="m" x="396" y="259">take money out</text>
+        <path class="flow" id="fJ" d="M88 136 C110 136 108 75 128 75"/>
+        <path class="flow" id="fIE" d="M230 120 L230 183"/>
+        <path class="flow" id="fIA" d="M330 55 L378 55"/>
+        <path class="flow" id="fAI" d="M380 95 L332 95"/>
+        <path class="flow" id="fIL" d="M318 120 C340 160 350 210 378 215"/>
+        <path class="flow" id="fLE" d="M380 255 L332 255"/>
+      </svg></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel"><h2>Assets</h2><p class="hint">Everything you own, with the Rich Dad verdict. Stocks and gold come from the Zakat tab.</p><div id="rdA"></div></div>
+    <div class="panel"><h2>Liabilities</h2><p class="hint">Loans, car finance, credit cards, BNPL. Include the payment in your monthly expenses too.</p>
+      <div class="colh"><span>Name</span><span>Owed</span><span>Per month</span><span></span></div><div id="rdL"></div></div>
+  </div>
+</section>
+<section class="tab" id="lr">
+  <div class="lhero"><div class="lh-top"><div><small>Your path to financial freedom</small><h2 id="lLvl"></h2><span id="lCnt"></span><div class="lknow" id="lKnow"></div></div><div class="lh-badge">🏆</div></div>
+   <div class="lbar"><i id="lBar"></i></div>
+   <label for="lPur" class="pl">🎯 My definite purpose <small>Amount, date and plan. Read it every morning and night.</small></label>
+   <textarea id="lPur" rows="3" placeholder="Example: By December 2035 I will have €500,000 in halal investments paying me €2,000 a month. I will invest 25% of my income every month and grow my business."></textarea></div>
+  <h3 class="sec">10 steps, in order</h3><p class="hint">The same path described in Rich Dad Poor Dad, Think and Grow Rich, The Richest Man in Babylon and other classics. Steps check themselves from your data.</p>
+  <div id="lSteps"></div>
+  <h3 class="sec">🧠 Three money mindsets</h3><p class="hint">Inspired by Rich Dad Poor Dad. These describe habits, not people. Your income doesn't define you, and every habit can be learned.</p>
+  <div class="panel mind"><div class="seg" id="mSeg"><button data-m="s">🛟 Survival</button><button data-m="c">🏠 Comfort</button><button data-m="b">🧱 Builder</button></div><div id="mBody"></div>
+   <button class="btn ghost" id="mQuizB" style="margin-top:12px">🔍 Which one am I today? 5-question self-check</button></div>
+  <h3 class="sec">🎮 Play &amp; practice</h3><p class="hint">See with your own eyes how assets build wealth. Learn by doing.</p>
+  <div class="ggrid" id="lGames"></div>
+  <h3 class="sec">Lessons <small id="lRead"></small></h3>
+  <div class="chips" id="lTopics"></div><div class="lgrid" id="lLessons"></div>
+  <h3 class="sec">🏅 Topic quizzes</h3><p class="hint">Read all lessons in a topic to unlock its quiz. Score 3 of 4 to earn the badge.</p>
+  <div class="ggrid" id="lQuiz"></div>
+  <h3 class="sec">🕌 Wisdom from the Quran and Sunnah</h3><p class="hint">Timeless guidance on earning, spending and giving. Meanings in English with references.</p>
+  <div class="wgrid" id="lWis"></div>
+  <h3 class="sec">They did it. So can you.</h3><p class="hint">From the companions of the Prophet ﷺ to people with ordinary incomes today.</p>
+  <div class="sgrid" id="lStories"></div>
+  <h3 class="sec">Bookshelf</h3><p class="hint">Lessons here are summaries in our own words. Read the originals for the full ideas.</p>
+  <div class="bgrid" id="lBooks"></div>
+</section>
+<section class="tab" id="as">
+  <div class="stats">
+    <div class="stat"><span>Total assets</span><b id="asV">0</b></div>
+    <div class="stat"><span>Net cash flow / month</span><b id="asN">0</b></div>
+    <div class="stat"><span>Average net yield</span><b id="asY">–</b></div>
+    <div class="stat"><span>Loans on assets</span><b id="asL">0</b></div>
+  </div>
+  <div class="panel invp"><div class="invh"><h2>📈 Investments</h2><button class="btn sm" id="invAdd">＋ Add investment</button></div><div id="invList"></div></div>
+  <button class="btn addbig" id="asAdd">＋ Add asset: property, business, app, website…</button>
+  <div id="asList"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel"><h2>What you own</h2><div class="chart"><canvas id="cAs"></canvas></div></div>
+    <div class="panel"><h2>Income by asset</h2><div class="chart"><canvas id="cAi"></canvas></div></div>
+    <div class="panel"><h2>Insights</h2><div id="asTips"></div></div>
+  </div>
+</section>
+<section class="tab" id="go">
+  <div class="panel" style="margin-bottom:16px"><h2>Goals</h2><p class="hint" id="glSum" style="margin:0"></p></div>
+  <div class="grid g2" id="gl"></div>
+  <button class="add" id="glAdd" style="margin-top:16px">Add goal</button>
+</section>
+<section class="tab" id="lg">
+  <div class="months" id="mStrip"></div>
+  <div id="mEdit"></div>
+</section>
+
+<section class="tab" id="zk">
+  <div class="grid g2">
+    <div class="panel"><h2>Your wealth today</h2>
+      <div class="field"><label for="a-cash">Cash &amp; bank</label><input type="number" id="a-cash" data-b="assets.cash"></div>
+      <div class="field"><label for="a-em">Emergency fund</label><input type="number" id="a-em" data-b="assets.emergency"></div>
+      <div class="field"><label for="a-st">Stocks / ETFs</label><input type="number" id="a-st" data-b="assets.stocks"></div>
+      <div class="field"><label for="a-gd">Gold (value)</label><input type="number" id="a-gd" data-b="assets.gold"></div>
+      <div class="field"><label for="a-gp">Gold price per gram</label><input type="number" id="a-gp" data-b="zakat.goldPrice"></div>
+    </div>
+    <div class="panel"><h2 id="zkT">Zakat this year</h2>
+      <div class="kv"><span>Zakatable wealth</span><b id="zW"></b></div>
+      <div class="kv"><span>Nisab (85 g gold)</span><b id="zN"></b></div>
+      <div class="kv"><span>Zakat due (2.5%)</span><b id="zD"></b></div>
+      <div class="kv"><span>Paid (from monthly entries)</span><b id="zP"></b></div>
+      <div class="kv"><span>Still to pay</span><b id="zR"></b></div>
+      <div class="kv"><span>Sadaqah this year</span><b id="zS"></b></div>
+      <p class="note">Log zakat and sadaqah in each month's entry. Simplified: stocks and gold at full value. Check the method with a scholar you trust.</p>
+    </div>
+    <div class="panel"><h2>Giving by month</h2><div class="chart"><canvas id="cGive"></canvas></div></div>
+  </div>
+</section>
+
+<section class="tab" id="pj">
+  <div class="panel" style="margin-bottom:16px">
+    <p class="hint" id="pBase"></p>
+    <div class="yrs"><span>Years ahead:</span><div class="seg" id="yrBtns"><button data-y="5">5</button><button data-y="10">10</button><button data-y="20">20</button><button data-y="30">30</button></div>
+      <input type="number" min="1" max="60" style="width:80px" data-b="proj.years" aria-label="Custom years"></div>
+    <div class="grid g2"><div>
+      <div class="field"><label>Income growth % / year</label><input type="number" step="0.5" data-b="proj.incomeGrowth"></div>
+      <div class="field"><label>Inflation % / year</label><input type="number" step="0.5" data-b="proj.inflation"></div>
+    </div><div>
+      <div class="field"><label>Stocks return % / year</label><input type="number" step="0.5" data-b="proj.stockReturn"></div>
+      <div class="field"><label>Gold return % / year</label><input type="number" step="0.5" data-b="proj.goldReturn"></div>
+    </div></div>
+  </div>
+  <div class="stats">
+    <div class="stat"><span>Net worth at the end</span><b id="pNW"></b></div>
+    <div class="stat"><span>Passive income then (monthly)</span><b id="pPI"></b></div>
+    <div class="stat"><span>Financial freedom</span><b id="pFY"></b></div>
+  </div>
+  <div class="grid g2">
+    <div class="panel"><h2>Net worth over time</h2><div class="chart tall"><canvas id="cNW"></canvas></div></div>
+    <div class="panel"><h2>Passive income vs expenses</h2><p class="hint">Freedom is where the lines cross. Passive income = 4% of stocks per year + your current passive income.</p><div class="chart"><canvas id="cFR"></canvas></div></div>
+  </div>
+</section>
+
+<section class="tab" id="al">
+  <div class="grid g2">
+    <div class="panel"><h2>Your plan for savings</h2><div id="steps"></div></div>
+    <div class="panel"><h2>Split after the emergency fund</h2>
+      <div class="presets"><button data-pr="safe">Careful</button><button data-pr="bal">Balanced</button><button data-pr="grow">Growth</button></div>
+      <div class="field"><label>Emergency fund (months of expenses)</label><input type="number" min="0" max="24" data-b="alloc.emMonths"></div>
+      <div id="sliders"></div>
+      <div class="total"><span>Total</span><span id="alT"></span></div>
+    </div>
+    <div class="panel"><h2>Monthly split</h2><div class="chart"><canvas id="cAl"></canvas></div>
+      <p class="note">Halal-friendly ideas: Shariah-screened ETFs (e.g. MSCI Islamic indices), physical gold you own, saving for a home without interest-based loans. A planning tool, not financial advice.</p></div>
+  </div>
+</section>
+<section class="tab" id="gr">
+  <div class="panel" style="margin-bottom:16px"><h2>💡 Spending check-up</h2><p class="hint" id="coachTot"></p>
+   <button class="btn sm" id="coachUse" hidden>Try it in What if…</button><div class="ccgrid" id="coach"></div>
+   <p class="note">Found automatically from your expense names in Months. Add amounts for daily habits you don't log as expenses. Swaps are suggestions, not rules.</p></div>
+  <div class="panel" style="margin-bottom:16px"><h2>Your money health</h2><div class="score" id="gScore"></div></div>
+  <div class="grid g2">
+    <div class="panel"><h2>Your next moves</h2><p class="hint">Based on your last months. Updates as you log.</p><div id="gTips"></div></div>
+    <div class="panel"><h2>What if…</h2><p class="hint">Small changes, big difference. Try it.</p>
+      <div class="slider"><div><span>Cut spending / month</span><span id="wCutV"></span></div><input type="range" id="wCut" min="0" max="1000" step="25" value="0" aria-label="Cut spending per month"></div>
+      <div class="slider"><div><span>New extra income / month</span><span id="wExtV"></span></div><input type="range" id="wExt" min="0" max="3000" step="50" value="0" aria-label="New extra income per month"></div>
+      <div class="slider"><div><span>New passive income / month</span><span id="wPasV"></span></div><input type="range" id="wPas" min="0" max="2000" step="25" value="0" aria-label="New passive income per month"></div>
+      <div class="whatif"><div><small>Freedom year now</small><br><b id="wNow"></b></div><div>→</div><div><small>With these changes</small><br><b id="wNew"></b></div></div>
+      <p class="note" id="wNW"></p>
+    </div>
+    <div class="panel"><h2>Your asset ladder</h2><p class="hint">Climb one step at a time. Each step builds the next.</p><div class="ladder" id="gLad"></div></div>
+    <div class="panel"><h2>Ideas to create more assets</h2><p class="hint">Assets put money in your pocket. Halal-friendly options.</p><div id="gIdeas"></div></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h2>Lessons to remember</h2><div class="lessons" id="gLes"></div></div>
+</section>
+<footer class="foot">
+  <p>This product was inspired by <i>Rich Dad Poor Dad</i> by Robert T. Kiyosaki.</p>
+  <p>Not affiliated with or endorsed by Robert Kiyosaki or the Rich Dad Company. A planning and education tool, not financial advice.</p>
+</footer>
+</div>
+
+<nav class="bnav" id="bnav" aria-label="Main">
+  <button data-t="ov" class="on"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Home</span></button><button data-t="lg"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Months</span></button>
+  <button data-t="go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg><span>Goals</span></button><button data-t="lr"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z"/><path d="M4 20a2 2 0 0 0 2 2h13v-4"/><path d="M9 7h6"/></svg><span>Learn</span></button>
+  <button data-t="more" id="moreB"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg><span>More</span></button></nav>
+<dialog id="moreD" aria-label="More"><div class="mgrid">
+  <button data-t="as"><b>🏢</b>My assets</button><button data-t="rd"><b>📊</b>Rich Dad view</button><button data-t="zk"><b>🕌</b>Zakat &amp; sadaqah</button><button data-t="pj"><b>📈</b>Projection</button>
+  <button data-t="al"><b>🧺</b>Where to put savings</button><button data-t="gr"><b>🌱</b>Grow assets</button>
+  <button data-x="set"><b>⚙️</b>Settings</button><button data-x="prof"><b>👤</b>Profiles</button></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="lessonD" class="wide" aria-label="Lesson"><div class="dh"><span></span><button class="gx" id="lessonX" aria-label="Close lesson">×</button></div><div id="lessonC"></div></dialog>
+<dialog id="atD" class="wide" aria-labelledby="atH"><div class="dh"><h2 id="atH">What do you own?</h2><button class="gx" id="atX" aria-label="Close">×</button></div><div id="atC"></div></dialog>
+<dialog id="assetD" class="wide" aria-label="Asset"><div id="assetC"></div></dialog>
+<dialog id="playD" class="wide game" aria-label="Practice"><div class="dh"><span></span><button class="gx" id="playX" aria-label="Close">×</button></div><div id="playC"></div></dialog>
+<dialog id="invD" class="wide" aria-label="Investment"><div id="invC"></div></dialog>
+<dialog id="setD" aria-labelledby="setH" class="wide"><div class="dh"><h2 id="setH">Settings</h2><button class="gx" id="setX" aria-label="Close settings">×</button></div>
+ <div class="sbox"><h3>📍 Where your data is</h3>
+  <div class="where"><div class="dev" id="wDev"></div><div><b id="wWhat"></b><p class="hint" id="wSub" style="margin:2px 0 0"></p></div></div>
+  <div class="kv"><span>Address</span><b id="wAddr"></b></div>
+  <div class="kv"><span>Profile</span><b id="wProf"></b></div>
+  <div class="kv"><span>Size</span><b id="wSize"></b></div>
+  <div class="kv"><span>Protected from auto-cleanup</span><b id="wPers"></b></div>
+  <div class="kv"><span>Google Drive</span><b id="wDrive"></b></div>
+  <details><summary>Exact location on disk</summary><div id="wPath"></div></details>
+ </div>
+ <div class="sbox"><h3>💾 Backup &amp; move to another device</h3>
+  <p class="hint" id="wBk"></p>
+  <div class="ctrls"><button class="btn" id="exp">Export backup</button><button class="btn ghost" id="imp">Import backup</button></div>
+  <input type="file" id="impF" accept=".json,application/json" hidden>
+  <p class="hint" id="wDl" style="margin:10px 0 0"></p></div>
+ <div class="sbox"><h3>☁️ Google Drive sync <small style="font-weight:400;color:var(--muted)">optional</small></h3>
+  <p class="hint" id="wSync"></p><button class="btn" id="setSync">Open sync settings</button></div>
+ <div class="sbox"><h3>🧹 Start fresh</h3><p class="hint">Erase all data of this profile on this device and start from zero. Export a backup first if you might need it.</p><button class="btn danger" id="wipeB">Erase this profile's data</button></div>
+ <div class="sbox"><h3>🎨 Appearance</h3><div class="seg" id="themeS"><button data-th="auto">Auto</button><button data-th="light">Light</button><button data-th="dark">Dark</button></div></div>
+ <p class="hint" style="text-align:center;margin:14px 0 0" id="verL"></p>
+ <div class="sbox"><h3>🌍 Currency</h3>
+  <select id="cur" aria-label="Currency"><option>EUR</option><option>USD</option><option>GBP</option><option>PKR</option><option>AED</option><option>SAR</option><option>INR</option><option>TRY</option><option>CHF</option><option>CAD</option><option>AUD</option><option>MYR</option></select></div>
+</dialog>
+<dialog id="syncD" aria-labelledby="syncH"><h2 id="syncH">Sync across devices</h2><div id="syncC" style="margin-top:10px"></div>
+<div class="ctrls" style="margin-top:14px"><button class="btn ghost" id="syncX">Close</button></div></dialog>
+<dialog id="profD" aria-labelledby="profH"><h2 id="profH">Profiles</h2>
+<p class="hint">Each profile has its own data on this device and its own Google Drive file. Nothing is ever shared between profiles.</p>
+<div id="profL"></div><div class="ctrls" style="margin-top:12px"><button class="btn" id="profAdd">Add profile</button><button class="btn ghost" id="profClose">Close</button></div></dialog>
+<script src="js/app.js"></script>
+</body>
+</html>

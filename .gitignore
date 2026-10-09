@@ -1,0 +1,16 @@
+# OS & editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Never commit personal data or backups
+*.json
+!package.json
+backups/
+*.backup
+
+# Python
+__pycache__/
+*.pyc
+.venv/
