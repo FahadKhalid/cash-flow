@@ -4310,3 +4310,146 @@ dialog.game {
 .ibtn .tx {
   white-space: nowrap;
 }
+
+/* ---------- PIN lock ---------- */
+body.locked .wrap,
+body.locked .bnav,
+body.locked .toast {
+  visibility: hidden;
+}
+
+.pinlock {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+  overflow: auto;
+  background: radial-gradient(700px 500px at 80% -10%, color-mix(in srgb, var(--gold) 22%, transparent), transparent 60%), radial-gradient(600px 400px at 0% 100%, color-mix(in srgb, var(--acc2) 14%, transparent), transparent 60%), var(--bg);
+}
+
+.pinlock[hidden] {
+  display: none;
+}
+
+.lkbox {
+  width: min(360px, 100%);
+  text-align: center;
+  animation: pop .35s var(--ease);
+}
+
+.lklogo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--gold) 80%, transparent);
+}
+
+.lklogo svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.lkbox h2 {
+  font-size: 1.5rem;
+}
+
+.lkbox .hint {
+  margin: 6px 0 18px;
+  min-height: 2.6em;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+
+.dots i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  transition: background .15s, transform .15s, border-color .15s;
+}
+
+.dots i.on {
+  background: var(--gold);
+  border-color: var(--gold);
+  transform: scale(1.12);
+}
+
+.dots.shake {
+  animation: shake .35s;
+}
+
+.lkerr {
+  min-height: 1.4em;
+  margin: 8px 0;
+  color: var(--rose);
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.pad button {
+  height: 64px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--sh);
+  transition: transform .1s, background .15s;
+  touch-action: manipulation;
+}
+
+.pad button:active {
+  transform: scale(.94);
+  background: var(--input);
+}
+
+.pad button[data-k="ok"] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.pad button[hidden] {
+  display: block;
+  visibility: hidden;
+}
+
+.pad button:disabled {
+  opacity: .4;
+}
+
+.lklink {
+  margin-top: 16px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: .9rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.lkbox .note {
+  margin-top: 14px;
+}

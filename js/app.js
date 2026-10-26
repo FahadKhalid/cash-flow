@@ -865,21 +865,188 @@ function renderNWH() {
 }
 /* ---------- profiles: every person's data is kept apart ---------- */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
-const LS = { get: k => { try {
-    return localStorage.getItem(k);
+/* ---------- PIN lock & encryption at rest ----------
+ * Profile data is encrypted in localStorage with AES-256-GCM. The key comes from the PIN
+ * (PBKDF2-SHA-256, 310 000 iterations, random salt) and only exists in memory while unlocked.
+ * Decrypted values are kept in MEM so the rest of the app can stay synchronous;
+ * writes are encrypted in the background through a small queue.
+ */
+const LOCK_K = "cashflow:lock", FAIL_K = "cashflow:lockfail", PIN_MIN = 4, PIN_MAX = 5, KDF_ITER = 310000;
+const ENC_KEY = /^cashflow:data:[^:]+$|^cashflow$/;
+const MEM = {}, PEND = {};
+let KEY = null, wq = Promise.resolve();
+const te = new TextEncoder(), td = new TextDecoder();
+const b64 = u => btoa(String.fromCharCode(...u));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const hasCrypto = () => !!(window.crypto && crypto.subtle && window.isSecureContext);
+async function deriveKey(pin, salt, iter) {
+  const base = await crypto.subtle.importKey("raw", te.encode(pin), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function encStr(str, key = KEY) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, te.encode(str)));
+  const out = new Uint8Array(12 + ct.length);
+  out.set(iv);
+  out.set(ct, 12);
+  let s = "";
+  for (let i = 0; i < out.length; i += 0x8000) s += String.fromCharCode(...out.subarray(i, i + 0x8000));
+  return "enc1:" + btoa(s);
+}
+async function decStr(v, key = KEY) {
+  const u = unb64(v.slice(5));
+  return td.decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: u.slice(0, 12) }, key, u.slice(12)));
+}
+function queueWrite(k) {
+  wq = wq.then(async () => {
+    if (!(k in PEND)) return;
+    const v = PEND[k];
+    delete PEND[k];
+    try {
+      if (v === null) localStorage.removeItem(k);
+      else localStorage.setItem(k, KEY ? await encStr(v) : v);
+    } catch (e) { console.error("Cash Flow: could not save", e); }
+  });
+  return wq;
+}
+const flushWrites = () => wq;
+const LS = {
+  get: k => { if (KEY && ENC_KEY.test(k)) return k in MEM ? MEM[k] : null; try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { if (KEY && ENC_KEY.test(k)) { MEM[k] = v; PEND[k] = v; queueWrite(k); return true; } try { localStorage.setItem(k, v); return true; } catch { return false; } },
+  del: k => { if (KEY && ENC_KEY.test(k)) { delete MEM[k]; PEND[k] = null; queueWrite(k); return; } try { localStorage.removeItem(k); } catch { } }
+};
+/* fallback when Web Crypto is unavailable (file:// pages): a lock screen without encryption */
+function weakHash(pin, salt) { let h = 2166136261; for (let r = 0; r < 5000; r++) for (const c of salt + pin + r) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return h.toString(36); }
+const lockCfg = () => { try { return JSON.parse(localStorage.getItem(LOCK_K) || "null"); } catch { return null; } };
+const fails = () => { try { return JSON.parse(localStorage.getItem(FAIL_K) || "null") || { n: 0, until: 0 }; } catch { return { n: 0, until: 0 }; } };
+let LK = { mode: "unlock", pin: "", first: "", busy: false, onDone: null };
+function lockUI() {
+  const t = { set: ["Set your PIN", `Choose ${PIN_MIN}–${PIN_MAX} digits. Your data on this device is encrypted with it.`],
+    confirm: ["Confirm your PIN", "Enter the same PIN again."],
+    unlock: ["Enter your PIN", "Your data is locked on this device."],
+    old: ["Current PIN", "Enter your current PIN to change it."] }[LK.mode];
+  $("lkT").textContent = t[0];
+  $("lkP").textContent = t[1];
+  const len = LK.mode === "unlock" || LK.mode === "old" ? (lockCfg()?.len || PIN_MAX) : PIN_MAX;
+  $("lkD").innerHTML = Array.from({ length: len }, (_, i) => `<i class="${i < LK.pin.length ? "on" : ""}"></i>`).join("");
+  const showOk = LK.mode === "set" || LK.mode === "confirm";
+  $("lkOk").hidden = !showOk;
+  $("lkOk").disabled = LK.pin.length < PIN_MIN || LK.busy;
+  $("lkForgot").hidden = LK.mode !== "unlock";
+  $("lkCancel").hidden = LK.mode !== "old" && !(LK.change && (LK.mode === "set" || LK.mode === "confirm"));
+  $("lkNote").hidden = LK.mode !== "set" || LK.change;
+  $("lkWeak").hidden = hasCrypto();
+}
+function lockErr(msg) { const e = $("lkE"); e.textContent = msg; $("lkD").classList.remove("shake"); void $("lkD").offsetWidth; if (msg) $("lkD").classList.add("shake"); }
+function lockKey(d) {
+  if (LK.busy) return;
+  const f = fails();
+  if (LK.mode === "unlock" && f.until > Date.now()) return lockErr(`Too many tries. Wait ${Math.ceil((f.until - Date.now()) / 1000)} s.`);
+  if (d === "back") LK.pin = LK.pin.slice(0, -1);
+  else if (d === "ok") return lockSubmit();
+  else if (/^\d$/.test(d) && LK.pin.length < PIN_MAX) LK.pin += d;
+  lockErr("");
+  lockUI();
+  const need = LK.mode === "unlock" || LK.mode === "old" ? (lockCfg()?.len || PIN_MAX) : PIN_MAX;
+  if (LK.pin.length === need) lockSubmit();
+}
+async function lockSubmit() {
+  if (LK.busy || LK.pin.length < PIN_MIN) return;
+  const pin = LK.pin;
+  if (LK.mode === "set") { LK.first = pin; LK.pin = ""; LK.mode = "confirm"; return lockUI(); }
+  if (LK.mode === "confirm") {
+    if (pin !== LK.first) { LK.pin = ""; LK.first = ""; LK.mode = "set"; lockUI(); return lockErr("PINs didn't match. Try again."); }
+    LK.busy = true; lockUI(); $("lkP").textContent = "Encrypting your data…";
+    try { await setPin(pin); } catch (e) { LK.busy = false; LK.pin = ""; lockUI(); return lockErr("Couldn't set the PIN on this browser."); }
+    LK.busy = false; LK.pin = ""; return lockDone(LK.change ? "✓ PIN changed" : "🔒 PIN set. Your data is encrypted");
   }
-  catch {
-    return null;
-  } }, set: (k, v) => { try {
-    localStorage.setItem(k, v);
+  LK.busy = true; lockUI(); $("lkP").textContent = "Checking…";
+  const ok = await checkPin(pin);
+  LK.busy = false; LK.pin = "";
+  if (!ok) {
+    const f = fails(); f.n++;
+    if (f.n >= 5) f.until = Date.now() + Math.min(15 * 60, 30 * 2 ** (f.n - 5)) * 1000;
+    localStorage.setItem(FAIL_K, JSON.stringify(f));
+    lockUI();
+    return lockErr(f.n >= 5 ? `Wrong PIN. Wait ${Math.round((f.until - Date.now()) / 1000)} s before trying again.` : `Wrong PIN. ${5 - f.n} ${5 - f.n === 1 ? "try" : "tries"} left before a short wait.`);
+  }
+  localStorage.removeItem(FAIL_K);
+  if (LK.mode === "old") { LK.mode = "set"; LK.change = true; return lockUI(); }
+  lockDone();
+}
+async function checkPin(pin) {
+  const c = lockCfg();
+  if (!c) return false;
+  if (c.weak) return weakHash(pin, c.salt) === c.h;
+  try {
+    const key = await deriveKey(pin, unb64(c.salt), c.iter);
+    if (await decStr(c.check, key) !== "cashflow-ok") return false;
+    if (!KEY) {
+      KEY = key;
+      for (const k of Object.keys(localStorage)) {
+        if (!ENC_KEY.test(k)) continue;
+        const v = localStorage.getItem(k);
+        if (v == null) continue;
+        if (v.startsWith("enc1:")) { try { MEM[k] = await decStr(v); } catch { localStorage.setItem(k + ":undecryptable-" + Date.now(), v); localStorage.removeItem(k); } }
+        else { MEM[k] = v; PEND[k] = v; queueWrite(k); }
+      }
+      await flushWrites();
+    }
     return true;
+  } catch { return false; }
+}
+async function setPin(pin) {
+  const salt = crypto.getRandomValues ? crypto.getRandomValues(new Uint8Array(16)) : Uint8Array.from({ length: 16 }, () => Math.random() * 256);
+  if (!hasCrypto()) { localStorage.setItem(LOCK_K, JSON.stringify({ v: 1, weak: true, salt: b64(salt), h: weakHash(pin, b64(salt)), len: pin.length })); return; }
+  const key = await deriveKey(pin, salt, KDF_ITER);
+  const plain = {};
+  for (const k of Object.keys(localStorage)) {
+    if (!ENC_KEY.test(k)) continue;
+    if (KEY && k in MEM) plain[k] = MEM[k];
+    else { const v = localStorage.getItem(k); if (v != null && !v.startsWith("enc1:")) plain[k] = v; }
   }
-  catch {
-    return false;
-  } }, del: k => { try {
-    localStorage.removeItem(k);
-  }
-  catch { } } };
+  Object.assign(plain, KEY ? MEM : {});
+  await flushWrites();
+  KEY = key;
+  for (const k in plain) { MEM[k] = plain[k]; PEND[k] = plain[k]; queueWrite(k); }
+  localStorage.setItem(LOCK_K, JSON.stringify({ v: 1, salt: b64(salt), iter: KDF_ITER, len: pin.length, check: await encStr("cashflow-ok", key) }));
+  await flushWrites();
+}
+function lockDone(msg) {
+  document.body.classList.remove("locked");
+  $("lock").hidden = true;
+  const cb = LK.onDone; LK.onDone = null; LK.change = false;
+  if (cb) cb();
+  if (msg) setTimeout(() => toast(msg), 300);
+}
+function showLock(mode, onDone) {
+  LK = { mode, pin: "", first: "", busy: false, onDone, change: mode === "old" };
+  document.body.classList.add("locked");
+  $("lock").hidden = false;
+  lockErr("");
+  lockUI();
+  setTimeout(() => $("lkPad").querySelector("button")?.focus({ preventScroll: true }), 50);
+}
+$("lkPad").onclick = e => { const b = e.target.closest("button"); if (b) lockKey(b.dataset.k); };
+$("lkOk").onclick = () => lockKey("ok");
+document.addEventListener("keydown", e => {
+  if ($("lock").hidden) return;
+  if (/^\d$/.test(e.key)) { e.preventDefault(); lockKey(e.key); }
+  else if (e.key === "Backspace") { e.preventDefault(); lockKey("back"); }
+  else if (e.key === "Enter") { e.preventDefault(); lockKey("ok"); }
+});
+$("lkCancel").onclick = () => { LK.onDone = null; lockDone(); };
+$("lkForgot").onclick = () => {
+  if (prompt("Without the PIN your data on this device can't be decrypted.\n\nType ERASE to delete all Cash Flow data on this device and start over. You can restore afterwards from a backup file or Google Drive sync.") !== "ERASE") return;
+  Object.keys(localStorage).filter(k => k.startsWith("cashflow")).forEach(k => localStorage.removeItem(k));
+  location.reload();
+};
+let hiddenAt = 0;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) hiddenAt = Date.now();
+  else if (lockCfg() && hiddenAt && Date.now() - hiddenAt > 5 * 60 * 1000 && $("lock").hidden) location.reload();
+});
+
 let PROFS = [], PID = null;
 const prof = () => PROFS.find(p => p.id === PID) || { id: PID, name: "Me" };
 const dataKey = id => "cashflow:data:" + id;
@@ -2754,7 +2921,7 @@ function trustUI() {
 }
 $("trX").onclick = () => { LS.set("cashflow:trustMin", LS.get("cashflow:trustMin") === "1" ? "0" : "1"); trustUI(); };
 $("trMore").onclick = () => { $("setB").click(); };
-const APP_VERSION = "2.7 · 9 Oct 2026";
+const APP_VERSION = "2.8 · 16 Oct 2026";
 console.info("Cash Flow " + APP_VERSION);
 /* ---------- controls ---------- */
 $("view").onclick = e => { const b = e.target.closest("button"); if (!b)
@@ -2769,15 +2936,16 @@ document.querySelector(".presets").onclick = e => { const b = e.target.closest("
 $("cur").onchange = e => { S.currency = e.target.value; renderAll(); change(); };
 C = { as: new Ch("cAs", "pie"), ai: new Ch("cAi"), nwh: new Ch("cNWH"), tr: new Ch("cTr"), pie: new Ch("cPie", "pie"), give: new Ch("cGive"), nw: new Ch("cNW"), fr: new Ch("cFR"), al: new Ch("cAl", "pie") };
 setTheme(LS.get("cashflow:theme") || "auto");
+function bootApp() {
 initProfiles();
 try {
-  Object.keys(localStorage).filter(k => /^cashflow:data:[^:]+$/.test(k)).forEach(k => { try {
-    const o = JSON.parse(localStorage.getItem(k));
+  [...new Set([...Object.keys(localStorage), ...Object.keys(MEM)])].filter(k => /^cashflow:data:[^:]+$/.test(k)).forEach(k => { try {
+    const o = JSON.parse(LS.get(k));
     if (o && typeof o === "object") {
       const before = JSON.stringify(o);
       const c = structuredClone(o);
       if (cleanDemo(c) && JSON.stringify(c) !== before)
-        localStorage.setItem(k, JSON.stringify(c));
+        LS.set(k, JSON.stringify(c));
     }
   }
   catch { } });
@@ -2785,3 +2953,7 @@ try {
 catch { }
 loadProfile(PID);
 requestAnimationFrame(moveInd);
+}
+$("lockNow").onclick = () => { flushWrites().then(() => location.reload()); };
+$("pinChange").onclick = () => { $("setD").close(); showLock("old", null); };
+showLock(lockCfg() ? "unlock" : "set", bootApp);

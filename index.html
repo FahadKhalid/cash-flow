@@ -17,7 +17,32 @@
 
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body>
+<body class="locked">
+<div id="lock" class="pinlock" role="dialog" aria-modal="true" aria-labelledby="lkT" aria-describedby="lkP">
+  <div class="lkbox">
+    <div class="lklogo"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="lk1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9B8AFB"/><stop offset=".55" stop-color="#7C6CF2"/><stop offset="1" stop-color="#4FD1C5"/></linearGradient>
+    <linearGradient id="lk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#lk1)"/>
+  <rect width="64" height="64" rx="18" fill="url(#lk2)"/>
+  <path d="M30 20.5a11.5 11.5 0 1 0 0 23" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <path d="M37 43.5V20.5h11M37 32h8" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="51" cy="44" r="3.6" fill="#fff"/>
+</svg></div>
+    <h2 id="lkT">Enter your PIN</h2>
+    <p id="lkP" class="hint"></p>
+    <div class="dots" id="lkD" aria-hidden="true"></div>
+    <p class="lkerr" id="lkE" role="alert"></p>
+    <div class="pad" id="lkPad"><button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="back" aria-label="Delete last digit">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="ok" id="lkOk" aria-label="Continue">✓</button></div>
+    <p class="note" id="lkNote" hidden>If you forget the PIN, the data on this device can't be recovered. Keep a backup or turn on sync.</p>
+    <p class="note" id="lkWeak" hidden>Open the app over https or localhost for full encryption.</p>
+    <button type="button" class="lklink" id="lkForgot" hidden>Forgot PIN?</button>
+    <button type="button" class="lklink" id="lkCancel" hidden>Cancel</button>
+  </div>
+</div>
+
 <div class="wrap">
 <header class="top">
   <div class="hrow">
@@ -271,6 +296,7 @@
   <p class="hint" id="wDl" style="margin:10px 0 0"></p></div>
  <div class="sbox"><h3>☁️ Google Drive sync <small style="font-weight:400;color:var(--muted)">optional</small></h3>
   <p class="hint" id="wSync"></p><button class="btn" id="setSync">Open sync settings</button></div>
+ <div class="sbox"><h3>🔐 PIN lock</h3><p class="hint">Your data on this device is encrypted with your PIN. The app locks itself after 5 minutes in the background.</p><div class="ctrls"><button class="btn" id="lockNow">Lock now</button><button class="btn ghost" id="pinChange">Change PIN</button></div></div>
  <div class="sbox"><h3>🧹 Start fresh</h3><p class="hint">Erase all data of this profile on this device and start from zero. Export a backup first if you might need it.</p><button class="btn danger" id="wipeB">Erase this profile's data</button></div>
  <div class="sbox"><h3>🎨 Appearance</h3><div class="seg" id="themeS"><button data-th="auto">Auto</button><button data-th="light">Light</button><button data-th="dark">Dark</button></div></div>
  <p class="hint" style="text-align:center;margin:14px 0 0" id="verL"></p>
