@@ -4749,3 +4749,12 @@ body.locked .toast {
     flex: 1 1 100%;
   }
 }
+
+/* Google Drive sync is hidden until SYNC_UI is turned on in app.js */
+[hidden] {
+  display: none !important;
+}
+
+body.no-sync #syncB, body.no-sync .sync-only {
+  display: none !important;
+}

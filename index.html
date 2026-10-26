@@ -36,7 +36,7 @@
     <div class="dots" id="lkD" aria-hidden="true"></div>
     <p class="lkerr" id="lkE" role="alert"></p>
     <div class="pad" id="lkPad"><button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="back" aria-label="Delete last digit">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="ok" id="lkOk" aria-label="Continue">✓</button></div>
-    <p class="note" id="lkNote" hidden>If you forget the PIN, the data on this device can't be recovered. Keep a backup or turn on sync.</p>
+    <p class="note" id="lkNote" hidden>If you forget the PIN, the data on this device can't be recovered. Keep a backup file.</p>
     <p class="note" id="lkWeak" hidden>Open the app over https or localhost for full encryption.</p>
     <button type="button" class="lklink" id="lkForgot" hidden>Forgot PIN?</button>
     <button type="button" class="lklink" id="lkCancel" hidden>Cancel</button>
@@ -264,8 +264,8 @@
   <div class="panel" style="margin-top:16px"><h2>Lessons to remember</h2><div class="lessons" id="gLes"></div></div>
 </section>
 <footer class="foot">
-  <p>This product was inspired by <i>Rich Dad Poor Dad</i> by Robert T. Kiyosaki.</p>
-  <p>Not affiliated with or endorsed by Robert Kiyosaki or the Rich Dad Company. A planning and education tool, not financial advice.</p>
+  <p>This product was inspired by <i>Rich Dad Poor Dad</i> by Robert T. Kiyosaki and <i>Think and Grow Rich</i> by Napoleon Hill.</p>
+  <p>Not affiliated with or endorsed by Robert Kiyosaki, the Rich Dad Company, or Napoleon Hill or his estate. A planning and education tool, not financial advice.</p>
 </footer>
 </div>
 
@@ -290,7 +290,7 @@
   <div class="kv"><span>Profile</span><b id="wProf"></b></div>
   <div class="kv"><span>Size</span><b id="wSize"></b></div>
   <div class="kv"><span>Protected from auto-cleanup</span><b id="wPers"></b></div>
-  <div class="kv"><span>Google Drive</span><b id="wDrive"></b></div>
+  <div class="kv sync-only"><span>Google Drive</span><b id="wDrive"></b></div>
   <details><summary>Exact location on disk</summary><div id="wPath"></div></details>
  </div>
  <div class="sbox"><h3>💾 Backup &amp; move to another device</h3>
@@ -298,7 +298,7 @@
   <div class="ctrls"><button class="btn" id="exp">Export backup</button><button class="btn ghost" id="imp">Import backup</button></div>
   <input type="file" id="impF" accept=".json,application/json" hidden>
   <p class="hint" id="wDl" style="margin:10px 0 0"></p></div>
- <div class="sbox"><h3>☁️ Google Drive sync <small style="font-weight:400;color:var(--muted)">optional</small></h3>
+ <div class="sbox sync-only"><h3>☁️ Google Drive sync <small style="font-weight:400;color:var(--muted)">optional</small></h3>
   <p class="hint" id="wSync"></p><button class="btn" id="setSync">Open sync settings</button></div>
  <div class="sbox"><h3>🔐 PIN lock</h3><p class="hint">Your data on this device is encrypted with your PIN. The app locks itself after 5 minutes in the background.</p><div class="ctrls"><button class="btn" id="lockNow">Lock now</button><button class="btn ghost" id="pinChange">Change PIN</button></div></div>
  <div class="sbox"><h3>🧹 Start fresh</h3><p class="hint">Erase all data of this profile on this device and start from zero. Export a backup first if you might need it.</p><button class="btn danger" id="wipeB">Erase this profile's data</button></div>
@@ -310,7 +310,7 @@
 <dialog id="syncD" aria-labelledby="syncH"><h2 id="syncH">Sync across devices</h2><div id="syncC" style="margin-top:10px"></div>
 <div class="ctrls" style="margin-top:14px"><button class="btn ghost" id="syncX">Close</button></div></dialog>
 <dialog id="profD" aria-labelledby="profH"><h2 id="profH">Profiles</h2>
-<p class="hint">Each profile has its own data on this device and its own Google Drive file. Nothing is ever shared between profiles.</p>
+<p class="hint">Each profile has its own data on this device. Nothing is ever shared between profiles.</p>
 <div id="profL"></div><div class="ctrls" style="margin-top:12px"><button class="btn" id="profAdd">Add profile</button><button class="btn ghost" id="profClose">Close</button></div></dialog>
 <script src="js/app.js"></script>
 </body>

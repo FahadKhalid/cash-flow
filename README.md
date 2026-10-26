@@ -160,6 +160,8 @@ Storage keys: `cashflow:profiles`, `cashflow:active`, `cashflow:data:<profileId>
 
 ## Optional Google Drive sync
 
+> **Currently hidden in the app.** To show the *Sync devices* button and the settings card again, set `SYNC_UI = true` in `js/app.js`.
+
 Each deployment needs its own free OAuth Client ID:
 
 1. [Google Cloud Console](https://console.cloud.google.com) → create a project → enable **Google Drive API**.

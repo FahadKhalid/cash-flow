@@ -1049,7 +1049,7 @@ document.addEventListener("keydown", e => {
 });
 $("lkCancel").onclick = () => { LK.onDone = null; lockDone(); };
 $("lkForgot").onclick = () => {
-  if (prompt("Without the PIN your data on this device can't be decrypted.\n\nType ERASE to delete all Cash Flow data on this device and start over. You can restore afterwards from a backup file or Google Drive sync.") !== "ERASE") return;
+  if (prompt("Without the PIN your data on this device can't be decrypted.\n\nType ERASE to delete all Cash Flow data on this device and start over. You can restore afterwards from a backup file.") !== "ERASE") return;
   Object.keys(localStorage).filter(k => k.startsWith("cashflow")).forEach(k => localStorage.removeItem(k));
   location.reload();
 };
@@ -1172,6 +1172,8 @@ $("profAdd").onclick = () => {
 const ownerOK = p => !p.owner || p.owner.id === PID || confirm(`This data belongs to the profile "${p.owner.name}", not "${prof().name}".\n\nLoad it into "${prof().name}" anyway? Its current data will be replaced.`);
 /* ---------- Google account sync: works on every device, offline first ---------- */
 // Forking? Put your own OAuth Client ID here, or paste it in the app's Sync dialog.
+const SYNC_UI = false; // true shows the Google Drive "Sync devices" feature again
+document.body.classList.toggle("no-sync", !SYNC_UI);
 const GOOGLE_CLIENT_ID = "";
 const SCOPE = "https://www.googleapis.com/auth/drive.appdata", FNAME = "cashflow.json", API = "https://www.googleapis.com";
 const CID = () => (GOOGLE_CLIENT_ID || LS.get("cashflow:clientId") || "").trim();
