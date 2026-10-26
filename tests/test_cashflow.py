@@ -29,15 +29,28 @@ def check(name, cond, info=""):
 
 def section(t): print(f"\n━━ {t}")
 
+def unlock(pg, pin="1234"):
+    """Get past the PIN lock: set a test PIN on first launch, or enter it when locked."""
+    if not pg.locator("#lock").is_visible():
+        return
+    if "Set" in (pg.text_content("#lkT") or ""):
+        for _ in range(2):
+            pg.keyboard.type(pin); pg.keyboard.press("Enter"); pg.wait_for_timeout(150)
+    else:
+        pg.keyboard.type(pin)
+        if not pg.evaluate("document.getElementById('lock').hidden"): pg.keyboard.press("Enter")
+    pg.wait_for_function("document.getElementById('lock').hidden", timeout=20000)
+    pg.wait_for_timeout(250)
+
 def fresh(browser, w=1280, h=900, mobile=False, scheme="light", storage=None):
     ctx = browser.new_context(viewport={"width": w, "height": h}, is_mobile=mobile, has_touch=mobile, color_scheme=scheme, accept_downloads=True)
     pg = ctx.new_page(); errs = []
     pg.on("pageerror", lambda e: errs.append(str(e)))
     pg.on("console", lambda m: errs.append("console: " + m.text) if m.type == "error" else None)
     pg.on("dialog", lambda d: d.accept(getattr(pg, "_prompt", "")))
-    pg.goto(URL); pg.wait_for_timeout(300)
+    pg.goto(URL); pg.wait_for_timeout(300); unlock(pg)
     if storage is not None:
-        pg.evaluate("s=>{localStorage.clear();for(const k in s)localStorage.setItem(k,s[k])}", storage); pg.reload(); pg.wait_for_timeout(400)
+        pg.evaluate("s=>{localStorage.clear();for(const k in s)localStorage.setItem(k,s[k])}", storage); pg.reload(); pg.wait_for_timeout(400); unlock(pg)
     return pg, errs
 
 def month(inc=3000, ext=0, pas=0, exp=2000, sad=0, zp=0):
@@ -166,7 +179,9 @@ with sync_playwright() as P:
     check("overview shows typed income", pg.inner_text("#sIn") == "€4,000", pg.inner_text("#sIn"))
     check("overview shows saved amount", pg.inner_text("#sSv") == "€2,400", pg.inner_text("#sSv"))
     check("welcome card hides after first month", not pg.is_visible("#ovWel"))
-    check("saved to device", json.loads(pg.evaluate("localStorage.getItem('cashflow:data:'+PID)"))["log"] != {})
+    pg.evaluate("flushWrites()")
+    check("saved to device", json.loads(pg.evaluate("LS.get('cashflow:data:'+PID)"))["log"] != {})
+    check("saved data is encrypted on disk", (pg.evaluate("localStorage.getItem('cashflow:data:'+PID)") or "").startswith("enc1:"))
     pg.evaluate("showTab('lg')"); pg.click("#next"); pg.wait_for_timeout(200)
     pg.click("#mEdit button:has-text('Copy from')"); pg.wait_for_timeout(300)
     check("copy previous month works", pg.evaluate("Object.keys(S.log).length") == 2)
@@ -256,7 +271,7 @@ with sync_playwright() as P:
     check("theme toggle switches", th1 != th2 and th1 in ("dark", "light"))
     pg._prompt = "ERASE"; pg.click("#setB"); pg.click("#wipeB"); pg.wait_for_timeout(400)
     check("erase resets profile to zero", pg.evaluate("Object.keys(S.log).length+S.port.length+S.goals.length") == 0)
-    pg.reload(); pg.wait_for_timeout(400)
+    pg.reload(); pg.wait_for_timeout(400); unlock(pg)
     check("erase persists after reload", pg.evaluate("Object.keys(S.log).length") == 0)
     check("no errors in backup/profile flows", not errs, errs[:3])
     pg.context.close()
@@ -323,7 +338,7 @@ with sync_playwright() as P:
     for name, store in CASES.items():
         pg, errs = fresh(B, storage=store); pg.wait_for_timeout(900)
         st = pg.evaluate("({m:Object.keys(S.log).length,g:S.goals.length,nw:netWorth(),prog:stepState().filter(x=>x.done).length,gp:S.zakat.goldPrice})")
-        others = pg.evaluate("Object.keys(localStorage).filter(k=>k.startsWith('cashflow:data:')).map(k=>{const o=JSON.parse(localStorage.getItem(k));return Object.keys(o.log||{}).length+(o.goals||[]).length+(+o.assets?.cash||0)})")
+        others = pg.evaluate("Object.keys(localStorage).filter(k=>k.startsWith('cashflow:data:')).map(k=>{const o=JSON.parse(LS.get(k));return Object.keys(o.log||{}).length+(o.goals||[]).length+(+o.assets?.cash||0)})")
         check(f"sample removed: {name}", st == {"m": 0, "g": 0, "nw": 0, "prog": 0, "gp": 0} and all(x == 0 for x in others) and not errs, (st, others, errs[:1]))
         pg.context.close()
     pg, errs = fresh(B, storage={"cashflow:profiles": P(("p", "Me")), "cashflow:active": "p", "cashflow:data:p": json.dumps({"log": {"2026-10": DM, "2026-09": mine}, "assets": {"cash": 8100, "emergency": 5000, "stocks": 6000, "gold": 3000}, "goals": GOALS + [{"id": "x", "n": "My car", "t": 9000, "s": 0}]})})
@@ -387,11 +402,11 @@ with sync_playwright() as P:
         route.continue_()
     ctx = B.new_context(); ctx.route(re.compile(r".*(googleapis|accounts\.google)\.com.*"), handle)
     pg = ctx.new_page(); errs = []; pg.on("pageerror", lambda e: errs.append(str(e))); pg.on("dialog", lambda d: d.accept())
-    pg.goto(URL); pg.wait_for_timeout(300); pg.evaluate("localStorage.setItem('cashflow:clientId','x.apps.googleusercontent.com')")
+    pg.goto(URL); pg.wait_for_timeout(300); unlock(pg); pg.evaluate("localStorage.setItem('cashflow:clientId','x.apps.googleusercontent.com')")
     pg.evaluate("connectGoogle()"); pg.wait_for_timeout(600)
     check("sync connects", pg.evaluate("SST") == "ok", pg.evaluate("SST"))
     MODE["m"] = "500"; pg.evaluate("S.assets.cash=111;change()"); pg.wait_for_timeout(2600)
-    check("server error → 'sync failed', data still saved locally", pg.evaluate("SST") == "error" and json.loads(pg.evaluate("localStorage.getItem('cashflow:data:'+PID)"))["assets"]["cash"] == 111)
+    check("server error → 'sync failed', data still saved locally", pg.evaluate("SST") == "error" and json.loads(pg.evaluate("LS.get('cashflow:data:'+PID)"))["assets"]["cash"] == 111)
     MODE["m"] = "401"; pg.evaluate("syncNow()"); pg.wait_for_timeout(500)
     check("expired login → 'tap to sync', no crash", pg.evaluate("SST") == "signin")
     MODE["m"] = "ok"; pg.evaluate("getToken().then(syncNow)"); pg.wait_for_timeout(700)
@@ -417,7 +432,7 @@ with sync_playwright() as P:
     check(f"one full re-render is fast ({times:.1f} ms median)", times < 120, times)
     tab_t = pg.evaluate("""()=>{const a=performance.now();for(const t of %s)showTab(t);return (performance.now()-a)/%d}""" % (json.dumps(TABS), len(TABS)))
     check(f"tab switch is fast ({tab_t:.1f} ms avg)", tab_t < 80, tab_t)
-    pg.reload(); pg.wait_for_timeout(100)
+    pg.reload(); pg.wait_for_timeout(100); unlock(pg)
     load = pg.evaluate("performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd")
     check(f"page ready quickly with big data ({load:.0f} ms)", load < 1500, load)
     size = pg.evaluate("localStorage.getItem('cashflow:data:'+PID).length")
