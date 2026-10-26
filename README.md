@@ -49,8 +49,9 @@
 
 - **Rich Dad view**: income statement and balance sheet with an animated cash-flow diagram that shows your current pattern.
 - **A 10-step path to financial freedom** that checks itself from your data, with levels and celebrations.
-- **21 lessons**, **6 topic quizzes** that unlock after reading, **three money mindsets** with a self-check, **wisdom from the Quran and Sunnah** (with references), and real stories.
-- **Games & simulators**: *Cashflow Challenge*, *Asset or liability?*, *The snowball*, *Early vs. late*, *Cost of a habit*.
+- **Think and Grow Rich toolkit**: a step-by-step *desire statement* builder (exact amount, what you give in return, date, plan) that creates a linked goal and shows the monthly saving needed; morning and night *reading check-ins* with a streak; a *persistence score* measured from your real logging, saving and reading chains; and a *temporary defeat log* for setbacks and comebacks.
+- **24 lessons**, **6 topic quizzes** that unlock after reading, **three money mindsets** with a self-check, **wisdom from the Quran and Sunnah** (with references), and real stories.
+- **Games & simulators**: *Cashflow Challenge*, *Asset or liability?*, *The snowball*, *Early vs. late*, *Cost of a habit*, *Three feet from gold*.
 - **Spending check-up**: spots subscriptions, eating out, smoking, impulse shopping and more, and suggests kinder, cheaper swaps.
 
 ### Everywhere

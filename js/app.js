@@ -238,6 +238,18 @@ function cleanDemo(o) {
 /* ---------- data sanitizer: every field gets the right type and range ---------- */
 const nz = v => { const n = typeof v === "string" && v.trim() === "" ? 0 : +v; return Number.isFinite(n) ? n : 0; }, cl = (v, a, b) => Math.min(b, Math.max(a, nz(v))), st = v => v == null ? "" : String(v).slice(0, 300), isO = v => v && typeof v === "object" && !Array.isArray(v);
 const rows = a => (Array.isArray(a) ? a : []).filter(isO).map(x => ({ n: st(x.n), a: nz(x.a) }));
+const longStr = (v, n) => v == null ? "" : String(v).slice(0, n);
+function sanTG(t) {
+  t = isO(t) ? t : {};
+  const D = isO(t.d) ? t.d : {}, R = {};
+  if (isO(t.reads))
+    Object.keys(t.reads).filter(k => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort().slice(-400).forEach(k => { const v = Math.round(cl(t.reads[k], 0, 3)); if (v) R[k] = v; });
+  return {
+    d: { amt: Math.max(0, nz(D.amt)), date: /^\d{4}-(0[1-9]|1[0-2])$/.test(D.date) ? D.date : "", give: longStr(D.give, 400), plan: longStr(D.plan, 400) },
+    gid: st(t.gid), reads: R, best: Math.max(0, Math.round(nz(t.best))),
+    sb: (Array.isArray(t.sb) ? t.sb : []).filter(isO).slice(0, 100).map(x => ({ id: st(x.id) || uid(), m: /^\d{4}-\d{2}$/.test(x.m) ? x.m : "", w: st(x.w), n: st(x.n), ok: !!x.ok }))
+  };
+}
 function sanitize(o) {
   try {
     new Intl.NumberFormat(undefined, { style: "currency", currency: o.currency });
@@ -269,7 +281,7 @@ function sanitize(o) {
   o.goals = (Array.isArray(o.goals) ? o.goals : []).filter(isO).map(g => ({ id: st(g.id) || uid(), n: st(g.n), ic: typeof g.ic === "string" && g.ic.length < 8 ? g.ic : "🎯", t: Math.max(0, nz(g.t)), s: Math.max(0, nz(g.s)), d: /^\d{4}-(0[1-9]|1[0-2])$/.test(g.d) ? g.d : "" }));
   o.port = (Array.isArray(o.port) ? o.port : []).filter(isO).map(a => ({ id: st(a.id) || uid(), type: AT[a.type] ? a.type : "other", n: st(a.n), v: nz(a.v), buy: nz(a.buy), bd: /^\d{4}-\d{2}$/.test(a.bd) ? a.bd : "", own: a.own == null || a.own === "" ? 100 : cl(a.own, 0, 100), inc: nz(a.inc), cost: nz(a.cost), g: cl(a.g, -100, 100), lo: Math.max(0, nz(a.lo)), lp: Math.max(0, nz(a.lp)), zk: !!a.zk, notes: st(a.notes) }));
   const Le = isO(o.learn) ? o.learn : {};
-  o.learn = { done: isO(Le.done) ? Le.done : {}, read: isO(Le.read) ? Le.read : {}, purpose: st(Le.purpose).slice(0, 1000), quiz: isO(Le.quiz) ? Le.quiz : {}, games: isO(Le.games) ? Le.games : {}, mind: typeof Le.mind === "string" ? Le.mind : undefined };
+  o.learn = { done: isO(Le.done) ? Le.done : {}, read: isO(Le.read) ? Le.read : {}, purpose: longStr(Le.purpose, 1000), quiz: isO(Le.quiz) ? Le.quiz : {}, games: isO(Le.games) ? Le.games : {}, mind: typeof Le.mind === "string" ? Le.mind : undefined, tg: sanTG(Le.tg) };
   const H = {};
   if (isO(o.nwHist))
     for (const k in o.nwHist)
@@ -2214,6 +2226,9 @@ const LESSONS2 = [
   { id: "purpose", tp: "Mindset", ic: "🔥", t: "Definite purpose", b: ["tg"], x: "Hill's core idea: fix in your mind the exact amount you want, set a date, decide what you'll give in return, make a plan and start at once. Write it and read it aloud morning and night until it becomes part of you.", try: "Write your purpose at the top of the Learn page." },
   { id: "persist", tp: "Mindset", ic: "🧗", t: "Persistence beats talent", b: ["tg", "ah"], x: "Most people give up at the first setback. Hill studied successful people and found they kept going after failure. Clear adds the how: build small systems, like a monthly transfer, and you don't need willpower every time.", try: "Make one money habit automatic this week." },
   { id: "mm", tp: "Mindset", ic: "🤝", t: "Your mastermind", b: ["tg"], x: "Surround yourself with people who think about growth. A small group that meets regularly to share ideas, push each other and solve problems multiplies what each person can do alone.", try: "Name 2–3 people you could start a money mastermind with." },
+  { id: "decide", tp: "Mindset", ic: "⚡", t: "Decide fast, change slowly", b: ["tg"], x: "Hill studied hundreds of people who built fortunes. They made decisions quickly and changed them slowly. People who failed decided slowly, if at all, and changed their minds often. Not deciding is also a decision: to stay where you are.", try: "Pick one money decision you've been putting off and make it today." },
+  { id: "spec", tp: "Mindset", ic: "🎯", t: "Specialized knowledge pays", b: ["tg", "rd"], x: "General knowledge rarely makes money by itself. Knowledge pays when it's specialized, organized into a plan and put to work. You don't need to know everything: know where to find it, from courses, books, mentors and experts.", try: "Choose one skill that would raise your income. Book the first lesson this week." },
+  { id: "imag", tp: "Mindset", ic: "💡", t: "Ideas become income", b: ["tg"], x: "Every business and fortune started as an idea. Hill's formula: a clear desire, ideas from your imagination, an organized plan, and action. Most ideas fail at first. Test small, learn, and improve the plan instead of dropping the goal.", try: "Write five ideas for a second income. Circle one to test in the next 30 days." },
   { id: "enough", tp: "Mindset", ic: "🧭", t: "Know what is enough", b: ["pm"], x: "The goal isn't endless more. It's control over your time. Without a sense of enough, you keep moving the finish line and risk what you have for what you don't need.", try: "Write a number: what monthly passive income would make you free?" },
   { id: "zakat", tp: "Halal finance", ic: "🕌", t: "Zakat grows wealth", b: [], x: "Zakat purifies wealth and keeps money moving in society. 2.5% of savings above nisab, held for a lunar year. Track it like any other goal; don't wait for what's left over. Sadaqah too: giving builds gratitude and barakah.", try: "Check your zakat due in the Zakat tab and set a date to pay." },
   { id: "halal", tp: "Halal finance", ic: "✅", t: "Halal investing basics", b: [], x: "Halal growth means owning real things and sharing real risk: shares of permissible businesses, physical gold you own, property and trade, profit-sharing partnerships. Avoid interest income and interest-based loans. When unsure, ask a scholar you trust.", try: "Check if your funds are Shariah-screened." }
@@ -2226,9 +2241,10 @@ const STORIES = [
   { ic: "🧹", n: "Ronald Read", w: "Gas-station attendant and janitor, Vermont", d: "Lived simply, bought shares of solid dividend-paying companies for decades and held them. When he died in 2014, his estate was worth around $8 million, mostly left to his local hospital and library.", l: "Consistency and time beat a high salary." },
   { ic: "📄", n: "Grace Groner", w: "Secretary, Illinois", d: "Bought three shares of her employer, Abbott, in 1935 for $180, never sold, and reinvested the dividends. At her death in 2010 they were worth about $7 million, which she left to her college for scholarships.", l: "Buy an asset, hold it, reinvest." },
   { ic: "🗂️", n: "Sylvia Bloom", w: "Legal secretary, New York, 67 years", d: "Quietly bought small amounts of the same stocks her bosses invested in, year after year. She left over $8 million, most of it to scholarships for students in need.", l: "Small amounts, invested regularly, become a fortune." },
+  { ic: "⛏️", n: "R. U. Darby", w: "Gold miner · Think and Grow Rich", d: "Darby found a rich vein of gold, then it disappeared. After months of drilling he gave up and sold his machinery to a junk dealer. The dealer called in a mining engineer, who found the vein just three feet from where Darby had stopped. Darby later became a top insurance salesman, remembering that lesson every time a customer said no.", l: "Most people quit just before the breakthrough. Ask an expert before you give up." },
   { ic: "📊", n: "Warren Buffett", w: "Investor", d: "Bought his first shares at 11. By far most of his wealth was built after his 60th birthday, because compounding needs decades to show its power.", l: "Start early and be patient." }
 ];
-const PRINCIPLES = ["An asset puts money in your pocket. Buy those first.", "Keep a part of everything you earn. Pay yourself first.", "Your savings rate matters more than your salary.", "Write your goal, set a date, read it daily.", "Wealth is what you don't see: the money you didn't spend.", "Time in the market beats timing the market.", "Every raise: save half before your lifestyle notices.", "Protect what you have before you chase more.", "Skills are the asset nobody can take from you.", "Persistence is the difference between a wish and a result.", "Zakat doesn't reduce wealth. It purifies and blesses it.", "Know what is enough, then stop moving the finish line."];
+const PRINCIPLES = ["An asset puts money in your pocket. Buy those first.", "Keep a part of everything you earn. Pay yourself first.", "Your savings rate matters more than your salary.", "Write your goal, set a date, read it daily.", "Wealth is what you don't see: the money you didn't spend.", "Time in the market beats timing the market.", "Every raise: save half before your lifestyle notices.", "Protect what you have before you chase more.", "Skills are the asset nobody can take from you.", "Persistence is the difference between a wish and a result.", "Decide quickly. Change your mind slowly.", "Every setback carries the seed of an equal or greater benefit.", "Zakat doesn't reduce wealth. It purifies and blesses it.", "Know what is enough, then stop moving the finish line."];
 const LEVELS = [[0, "Beginner", "🌱"], [3, "Saver", "💪"], [5, "Builder", "🧱"], [7, "Investor", "📈"], [9, "Almost free", "🚀"], [10, "Financially free", "🕊"]];
 function stepState() { const s = lstats(); return STEPS.map(st => { const c = st.chk(s); return { ...st, c, done: c.ok || !!S.learn.done[st.id] }; }); }
 function confetti() {
@@ -2271,6 +2287,7 @@ function renderLearn() {
     const pr = (S.learn.purpose || "").trim();
     ov.querySelector(".nx-pur").hidden = !pr;
     ov.querySelector(".nx-pur span").textContent = pr;
+    if (pr) readBar(ov.querySelector(".nx-pur .tgbar"));
   }
   $("dPrin").textContent = PRINCIPLES[Math.floor(Date.now() / 864e5) % PRINCIPLES.length];
   if (!$("lr").classList.contains("on"))
@@ -2280,6 +2297,7 @@ function renderLearn() {
   requestAnimationFrame(() => $("lBar").style.width = done * 10 + "%");
   if (document.activeElement !== $("lPur"))
     $("lPur").value = S.learn.purpose || "";
+  renderTG();
   // steps
   const box = $("lSteps"), open = [...box.querySelectorAll("details[open]")].map(d => d.dataset.id);
   box.innerHTML = "";
@@ -2787,7 +2805,243 @@ function playCF() {
   };
   openPlay("", draw);
 }
-const GAMES = [["cashflow", "🎲", "Cashflow Challenge", "Buy assets, avoid liabilities, escape the rat race", playCF], ["speed", "👛", "Asset or liability?", "30-second speed game", playSpeed], ["snow", "❄️", "The snowball", "See compounding grow your money", playSnow], ["friends", "👫", "Early vs late", "Why starting early wins", playFriends], ["habit", "☕", "Cost of a habit", "Small daily spending, big future cost", playHabit]];
+/* ---------- THINK AND GROW RICH toolkit: desire, daily reading, persistence ---------- */
+const TG = () => (S.learn.tg = S.learn.tg && S.learn.tg.d ? S.learn.tg : sanTG(S.learn.tg));
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const monthName = m => m ? new Date(+m.slice(0, 4), +m.slice(5) - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" }) : "";
+function monthsUntil(m) {
+  if (!m) return 0;
+  return (+m.slice(0, 4) - now.getFullYear()) * 12 + (+m.slice(5) - (now.getMonth() + 1));
+}
+function readStreak() {
+  const R = TG().reads, d = new Date();
+  if (!R[dayKey(d)]) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (R[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function readsLast(days) {
+  const R = TG().reads, d = new Date();
+  let n = 0;
+  for (let i = 0; i < days; i++) { if (R[dayKey(d)]) n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+const READ_MS = [[100, "💎"], [30, "🏅"], [7, "🔥"]];
+function markRead(bit) {
+  const t = TG(), k = dayKey(), had = t.reads[k] || 0;
+  t.reads[k] = had ^ bit;
+  const s = readStreak();
+  if (t.reads[k] & bit) {
+    const ms = READ_MS.find(([n]) => s === n);
+    if (ms && s > t.best) { confetti(); toast(`${ms[1]} ${s}-day streak! Your purpose is becoming part of you.`); }
+    else toast(bit === 1 ? "☀️ Morning reading done" : "🌙 Night reading done");
+  }
+  t.best = Math.max(t.best, s);
+  change();
+}
+function readBar(el) {
+  if (!el) return;
+  const v = TG().reads[dayKey()] || 0, s = readStreak();
+  el.innerHTML = `<button type="button" class="rdb${v & 1 ? " on" : ""}" data-b="1" aria-pressed="${!!(v & 1)}">${v & 1 ? "✓" : "☀️"} Read this morning</button><button type="button" class="rdb${v & 2 ? " on" : ""}" data-b="2" aria-pressed="${!!(v & 2)}">${v & 2 ? "✓" : "🌙"} Read tonight</button><span class="rds">${s ? `🔥 ${s}-day streak` : "Start your streak today"}</span>`;
+  el.querySelectorAll(".rdb").forEach(b => b.onclick = () => markRead(+b.dataset.b));
+}
+function monthChain(test) {
+  const cur = ck(now.getFullYear(), now.getMonth() + 1), d = new Date(now.getFullYear(), now.getMonth(), 1);
+  if (!S.log[cur]) d.setMonth(d.getMonth() - 1);
+  let n = 0;
+  while (n < 120) {
+    const k = ck(d.getFullYear(), d.getMonth() + 1);
+    if (!S.log[k] || !test(k)) break;
+    n++;
+    d.setMonth(d.getMonth() - 1);
+  }
+  return n;
+}
+function persistence() {
+  const logS = monthChain(() => true), saveS = monthChain(k => agg([k]).sv > 0), reads = readsLast(30);
+  const sb = TG().sb, comeback = sb.filter(x => x.ok).length;
+  const score = Math.round(35 * Math.min(logS, 12) / 12 + 35 * Math.min(saveS, 12) / 12 + 30 * reads / 30);
+  const lvl = score >= 75 ? ["Unstoppable", "🏔️"] : score >= 50 ? ["Steady", "🧗"] : score >= 25 ? ["Building", "🧱"] : ["Getting started", "🌱"];
+  return { logS, saveS, reads, comeback, open: sb.length - comeback, score, lvl };
+}
+function linkedGoal() { const t = TG(); return t.gid ? S.goals.find(g => g.id === t.gid) : null; }
+function renderTG() {
+  const t = TG(), d = t.d, box = $("tgDesire");
+  readBar($("tgRead"));
+  if (!box) return;
+  const g = linkedGoal(), left = monthsUntil(d.date), saved = g ? g.s : 0, need = d.amt && left > 0 ? Math.max(0, d.amt - saved) / left : 0;
+  if (!d.amt) {
+    box.innerHTML = `<h2>🔥 Your burning desire</h2><p class="hint">Hill's six steps turn a wish into a definite goal: the exact amount, what you'll give in return, a date, a plan, a written statement, and reading it every day.</p>
+ <ol class="tgsix"><li>Fix the exact amount</li><li>Decide what you'll give in return</li><li>Set a definite date</li><li>Make a plan and start at once</li><li>Write it as one clear statement</li><li>Read it every morning and night</li></ol>
+ <button class="btn" data-tgw>✍️ Build my statement (2 min)</button>`;
+  } else {
+    box.innerHTML = `<h2>🔥 Your burning desire</h2>
+ <div class="tgbig"><b></b><span></span></div>
+ <div class="kv"><span>Time left</span><b class="tgl"></b></div>
+ <div class="kv"><span>Save per month to get there</span><b class="tgn"></b></div>
+ ${g ? `<div class="kv"><span>Saved so far (goal)</span><b class="tgs"></b></div><div class="gbar"><i style="width:${Math.min(100, d.amt ? saved / d.amt * 100 : 0)}%"></i></div>` : ""}
+ <p class="hint tgcmp"></p>
+ <div class="ctrls"><button class="btn ghost sm" data-tgw>Edit statement</button>${g ? '<button class="btn ghost sm" data-tgg>Update saved amount</button>' : ""}</div>`;
+    box.querySelector(".tgbig b").textContent = fmt(d.amt);
+    box.querySelector(".tgbig span").textContent = `by ${monthName(d.date)}`;
+    box.querySelector(".tgl").textContent = left > 0 ? `${left} month${left === 1 ? "" : "s"}` : "Deadline reached";
+    box.querySelector(".tgn").textContent = left > 0 ? fmt(need) : "–";
+    if (g) box.querySelector(".tgs").textContent = fmt(saved);
+    const sv = base().sv, cmp = box.querySelector(".tgcmp");
+    cmp.textContent = !(left > 0) ? "Set a new date, or celebrate if you made it." : !logged().length ? "Log a month to compare this with what you actually save." : sv >= need ? `✅ You save about ${fmt(sv)} a month. That's enough to reach it on time.` : `You save about ${fmt(Math.max(0, sv))} a month. Find ${fmt(need - Math.max(0, sv))} more, or move the date. The Grow assets tab can help.`;
+    box.querySelector("[data-tgg]")?.addEventListener("click", () => showTab("go"));
+  }
+  box.querySelectorAll("[data-tgw]").forEach(b => b.onclick = desireWizard);
+  renderPersist();
+  renderSetbacks();
+}
+function renderPersist() {
+  const box = $("tgPersist");
+  if (!box) return;
+  const p = persistence();
+  box.innerHTML = `<h2>🧗 Persistence</h2><p class="hint">Hill found that persistence is what turns desire into results. This score is measured from what you actually do, not from what you plan.</p>
+ <div class="tgscore"><div class="tgring" style="--p:${p.score}"><b>${p.score}</b><small>/100</small></div><div><b>${p.lvl[1]} ${p.lvl[0]}</b><p class="hint"></p></div></div>
+ <div class="kv"><span>📅 Months logged in a row</span><b>${p.logS}</b></div>
+ <div class="kv"><span>💰 Months saved in a row</span><b>${p.saveS}</b></div>
+ <div class="kv"><span>📖 Days you read your purpose (last 30)</span><b>${p.reads}/30</b></div>
+ <div class="kv"><span>💪 Setbacks you came back from</span><b>${p.comeback}</b></div>`;
+  box.querySelector(".tgscore .hint").textContent = p.score >= 75 ? "Keep the chain going. This is how fortunes are built." : !p.logS ? "Log this month to start your first chain." : !p.saveS ? "Your saving chain is at zero. Save something this month, even a little, to start it again." : p.saveS < p.logS ? "You're tracking well. Keep saving every month to grow the chain." : !p.reads ? "Read your purpose today to add to your score." : "Small wins every month build an unbreakable habit.";
+}
+function renderSetbacks() {
+  const box = $("tgSet");
+  if (!box) return;
+  const t = TG(), last = logged().at(-1), lastSv = last ? agg([last]).sv : 0, known = t.sb.some(x => x.m === last);
+  box.innerHTML = `<h2>⛏️ Temporary defeat log</h2><p class="hint">Hill: every setback carries the seed of an equal or bigger benefit. Write down what went wrong and your next step, then come back.</p>
+ ${last && lastSv < 0 && !known ? `<div class="tgalert">In ${monthName(last)} you spent ${fmt(-lastSv)} more than you earned. That's a temporary defeat, not a failure. Log it below and decide your next step.</div>` : ""}
+ <div class="tgadd"><input id="sbW" maxlength="300" placeholder="What happened? e.g. car repair emptied my savings" aria-label="What happened"><input id="sbN" maxlength="300" placeholder="My next step, e.g. rebuild the fund with 100 a week" aria-label="My next step"><button class="btn sm" id="sbAdd">Add</button></div>
+ <div class="tglist"></div>`;
+  const list = box.querySelector(".tglist");
+  if (!t.sb.length) list.innerHTML = '<p class="hint">Nothing here yet. When something goes wrong, log it here. It turns a bad month into a plan.</p>';
+  t.sb.forEach(x => {
+    const r = document.createElement("div");
+    r.className = "tgsb" + (x.ok ? " ok" : "");
+    r.innerHTML = `<label class="tgchk"><input type="checkbox"${x.ok ? " checked" : ""}><span>${x.ok ? "Back on track" : "Mark as back on track"}</span></label><div><small></small><b></b><p></p></div><button class="gx" aria-label="Delete">×</button>`;
+    r.querySelector("small").textContent = monthName(x.m);
+    r.querySelector("b").textContent = x.w;
+    r.querySelector("p").textContent = x.n ? `Next step: ${x.n}` : "";
+    r.querySelector("input").onchange = e => { x.ok = e.target.checked; if (x.ok) { confetti(); toast("💪 Back on track. That's persistence."); } change(); };
+    r.querySelector(".gx").onclick = () => { if (confirm("Delete this entry?")) { t.sb.splice(t.sb.indexOf(x), 1); change(); } };
+    list.append(r);
+  });
+  $("sbAdd").onclick = () => {
+    const w = $("sbW").value.trim(), n = $("sbN").value.trim();
+    if (!w) return $("sbW").focus();
+    t.sb.unshift({ id: uid(), m: ck(now.getFullYear(), now.getMonth() + 1), w, n, ok: false });
+    toast(n ? "📝 Logged. Now take that next step." : "📝 Logged. Add your next step when you know it.");
+    change();
+  };
+}
+function desireWizard() {
+  const t = TG(), old = (S.learn.purpose || "").trim(), w = { ...t.d, goal: !!linkedGoal() || !t.gid, text: "" };
+  if (!w.date) { const d = new Date(now.getFullYear() + 5, now.getMonth(), 1); w.date = ck(d.getFullYear(), d.getMonth() + 1); }
+  let i = 0;
+  const steps = [
+    ["1. The exact amount", "Not \"a lot of money\". Hill insisted on a definite figure.", () => `<label class="pl" for="wzA">How much do you want? (${S.currency})</label><input id="wzA" type="number" inputmode="decimal" min="1" placeholder="e.g. 300000">`, c => { w.amt = Math.max(0, nz(c.querySelector("#wzA").value)); return w.amt > 0 || "Enter an amount above zero."; }, c => c.querySelector("#wzA").value = w.amt || ""],
+    ["2. What you'll give in return", "There is no such thing as something for nothing. What effort, skill or service will you give?", () => `<label class="pl" for="wzG">In return I will…</label><textarea id="wzG" rows="3" maxlength="400" placeholder="e.g. invest 25% of every salary, learn web design and take on two freelance clients a month"></textarea>`, c => { w.give = c.querySelector("#wzG").value.trim(); return w.give.length >= 8 || "Write a few words about what you'll give."; }, c => c.querySelector("#wzG").value = w.give || ""],
+    ["3. A definite date", "A goal without a date is a wish.", () => `<label class="pl" for="wzD">I will have it by</label><input id="wzD" type="month">`, c => { const v = c.querySelector("#wzD").value; w.date = v; return (/^\d{4}-\d{2}$/.test(v) && monthsUntil(v) > 0) || "Pick a month in the future."; }, c => c.querySelector("#wzD").value = w.date],
+    ["4. Your plan, starting now", "Start at once, ready or not. Improve the plan as you go.", () => `<label class="pl" for="wzP">My plan</label><textarea id="wzP" rows="3" maxlength="400" placeholder="e.g. move 25% to a halal index fund on salary day, cut eating out in half, launch my side business by March"></textarea><p class="hint wzneed"></p>`, c => { w.plan = c.querySelector("#wzP").value.trim(); return w.plan.length >= 8 || "Write the first steps of your plan."; }, c => {
+      c.querySelector("#wzP").value = w.plan || "";
+      const m = monthsUntil(w.date), sv = base().sv;
+      c.querySelector(".wzneed").textContent = `To reach ${fmt(w.amt)} by ${monthName(w.date)} you need about ${fmt(w.amt / m)} a month${logged().length ? `. You currently save about ${fmt(Math.max(0, sv))} a month` : ""}.`;
+    }],
+    ["5. Your statement", "Read it aloud every morning and every night. See yourself already having it.", () => `<label class="pl" for="wzS">My definite purpose</label><textarea id="wzS" rows="5" maxlength="1000"></textarea>${old ? '<button type="button" class="tgwiz wzold" id="wzOld">↩ Use my previous statement instead</button>' : ""}
+ <label class="tgchk wzg"><input type="checkbox" id="wzK"><span>Track it as a goal in the Goals tab</span></label>`, c => { w.text = c.querySelector("#wzS").value.trim(); w.goal = c.querySelector("#wzK").checked; return w.text.length >= 25 || "Your statement is too short."; }, c => {
+      const gen = statementOf(w);
+      c.querySelector("#wzS").value = !w.text || w.text === w.auto ? gen : w.text;
+      w.auto = gen;
+      const ob = c.querySelector("#wzOld");
+      if (ob) { ob.hidden = old === c.querySelector("#wzS").value.trim(); ob.onclick = () => { c.querySelector("#wzS").value = old; ob.hidden = true; }; }
+      c.querySelector("#wzK").checked = w.goal;
+    }]
+  ];
+  const draw = () => {
+    const [title, sub, html, , fill] = steps[i];
+    $("playC").innerHTML = `<small class="qtop">Think and Grow Rich · step ${i + 1} of ${steps.length}</small><div class="qprog"><i style="width:${i / steps.length * 100}%"></i></div><h2></h2><p class="hint"></p>${html()}<p class="lkerr wzerr" role="alert"></p><div class="ctrls">${i ? '<button class="btn ghost" id="wzB">← Back</button>' : ""}<button class="btn" id="wzN">${i === steps.length - 1 ? "Save my purpose" : "Next →"}</button></div>`;
+    $("playC").querySelector("h2").textContent = title;
+    $("playC").querySelector(".hint").textContent = sub;
+    fill($("playC"));
+    $("playC").querySelector("input, textarea")?.focus();
+    $("playC").querySelector("input:not([type=checkbox])")?.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("wzN").click(); } });
+    $("wzB") && ($("wzB").onclick = () => { const ta = $("playC").querySelector("#wzS"); if (ta) w.text = ta.value.trim(); i--; draw(); });
+    $("wzN").onclick = () => {
+      const ok = steps[i][3]($("playC"));
+      if (ok !== true) return $("playC").querySelector(".wzerr").textContent = ok;
+      if (i < steps.length - 1) { i++; return draw(); }
+      saveDesire(w);
+    };
+  };
+  openPlay("", draw);
+}
+function statementOf(w) {
+  return `By ${monthName(w.date)} I will have ${fmt(w.amt)}. In return I will ${w.give.replace(/[.\s]+$/, "")}. My plan: ${w.plan.replace(/[.\s]+$/, "")}. I start today, and I read this every morning and every night.`;
+}
+function saveDesire(w) {
+  const t = TG();
+  t.d = { amt: w.amt, date: w.date, give: w.give, plan: w.plan };
+  S.learn.purpose = w.text;
+  let g = linkedGoal();
+  if (w.goal) {
+    if (!g) { g = { id: uid(), n: "My definite purpose", ic: "🔥", t: 0, s: 0, d: "" }; S.goals.push(g); }
+    g.t = w.amt;
+    g.d = w.date;
+    t.gid = g.id;
+  } else t.gid = "";
+  goalsUI();
+  $("playD").close();
+  if (document.activeElement !== $("lPur")) $("lPur").value = S.learn.purpose;
+  confetti();
+  toast("🔥 Purpose saved. Read it tonight to start your streak.");
+  change(true);
+}
+/* Game: Three Feet from Gold (R. U. Darby's story in Think and Grow Rich) */
+const feet = n => n === 1 ? "1 foot" : `${n} feet`;
+function playGold() {
+  const G = { depth: 0, gold: 24 + Math.floor(Math.random() * 11), cash: 3000, dry: false, expert: false, msg: "The gold near the surface paid well. To find more you must dig deeper. Every dig costs " + fmt(100) + "." };
+  const end = win => {
+    markGame("gold", win ? 1 : 0);
+    const left = Math.max(0, G.gold - G.depth);
+    $("playC").innerHTML = `<div class="qend"><div class="big">${win ? "🏆" : "🪨"}</div><h2>${win ? "You struck gold!" : left <= 3 ? `You stopped ${feet(left)} from gold` : `The gold was ${feet(left)} further`}</h2>
+ <p>${win ? `At ${G.depth} feet the vein appeared again. Your claim is worth ${fmt(60000)}. You had ${fmt(G.cash)} left.` : G.cash < 100 ? "You ran out of money. Budget for the long road, and get expert advice before you need it." : "A junk dealer bought your mine for almost nothing, hired an engineer, and found the gold just where it was expected."}</p>
+ <div class="cflesson"><p><b>The real story:</b> R. U. Darby gave up when the vein disappeared and sold his machinery. The buyer asked a mining engineer, who found the gold three feet below where Darby stopped.</p><p><b>The lesson:</b> most people quit at the first big setback. Before you quit, ask someone who knows. Then keep digging. Darby said he would never stop again just because someone said no.</p></div>
+ <div class="ctrls" style="justify-content:center"><button class="btn" id="gdA">Play again</button><button class="btn ghost" id="gdX">Close</button></div></div>`;
+    $("gdA").onclick = playGold;
+    $("gdX").onclick = () => $("playD").close();
+  };
+  const draw = () => {
+    const shaft = Math.min(100, G.depth / 40 * 100);
+    $("playC").innerHTML = `<div class="cfh"><h2>⛏️ Three feet from gold</h2><span class="cfy">${G.depth} ft</span></div>
+ <div class="gdwrap"><div class="gdshaft" aria-hidden="true"><i style="height:${shaft}%"></i><span style="top:max(26px, ${shaft}%)">⛏️</span></div>
+ <div class="gdside"><div class="kv"><span>💵 Money left</span><b>${fmt(G.cash)}</b></div><div class="kv"><span>📏 Depth</span><b>${feet(G.depth)}</b></div>
+ <p class="cfev" aria-live="polite"></p></div></div>
+ <div class="ctrls gdbtn"><button class="btn" id="gdD" ${G.cash < 100 ? "disabled" : ""}>⛏️ Dig (−${fmt(100)})</button><button class="btn ghost" id="gdE" ${G.expert || G.cash < 400 ? "disabled" : ""}>🧑‍🔬 Ask an engineer (−${fmt(400)})</button><button class="btn ghost" id="gdQ">🏳️ Quit and sell</button></div>`;
+    $("playC").querySelector(".cfev").textContent = G.msg;
+    $("gdD").onclick = () => {
+      G.cash -= 100;
+      const r = Math.random(), step = r < .22 ? 0 : 1 + Math.floor(Math.random() * 3);
+      G.depth += step;
+      if (G.depth >= G.gold) return end(true);
+      if (!G.dry && G.depth >= G.gold - 7) { G.dry = true; G.msg = "😟 The vein has disappeared. Only rock. Your friends say it's time to give up."; }
+      else G.msg = step === 0 ? "🪨 Hard rock. No progress this time." : G.dry ? ["Still rock. Doubt is creeping in.", "Nothing yet. Your family asks how long you'll keep spending.", "Rock again. Is it worth it?"][Math.floor(Math.random() * 3)] : `You dug ${feet(step)}. Still searching for the vein.`;
+      if (G.cash < 100) return end(false);
+      draw();
+    };
+    $("gdE").onclick = () => {
+      G.cash -= 400;
+      G.expert = true;
+      const left = G.gold - G.depth;
+      G.msg = left <= 3 ? `🧑‍🔬 The engineer studies the rock: "The vein shifted along a fault line. The gold is about ${feet(left)} below you."` : `🧑‍🔬 The engineer studies the rock: "The vein continues. Expect it within about ${feet(left + 1)}."`;
+      draw();
+    };
+    $("gdQ").onclick = () => end(false);
+  };
+  openPlay("", draw);
+}
+const GAMES = [["cashflow", "🎲", "Cashflow Challenge", "Buy assets, avoid liabilities, escape the rat race", playCF], ["speed", "👛", "Asset or liability?", "30-second speed game", playSpeed], ["snow", "❄️", "The snowball", "See compounding grow your money", playSnow], ["friends", "👫", "Early vs late", "Why starting early wins", playFriends], ["habit", "☕", "Cost of a habit", "Small daily spending, big future cost", playHabit], ["gold", "⛏️", "Three feet from gold", "Keep digging, or quit just before the gold?", playGold]];
 function renderPlay() {
   const g = $("lGames");
   if (!g)
@@ -2798,7 +3052,7 @@ function renderPlay() {
     const b = document.createElement("button");
     b.className = "gcard";
     const v = G[k];
-    b.innerHTML = `<span class="gi">${ic}</span><b></b><small></small><em>${v === undefined ? "Play →" : k === "cashflow" ? `🏆 Best: free in ${100 - v} yrs` : k === "speed" ? `🏆 Record ${v}/12` : "✓ Explored"}</em>`;
+    b.innerHTML = `<span class="gi">${ic}</span><b></b><small></small><em>${v === undefined ? "Play →" : k === "cashflow" ? `🏆 Best: free in ${100 - v} yrs` : k === "speed" ? `🏆 Record ${v}/12` : k === "gold" ? (v ? "🏆 Struck gold" : "Try again →") : "✓ Explored"}</em>`;
     b.querySelector("b").textContent = t;
     b.querySelector("small").textContent = d;
     b.onclick = fn;
@@ -2830,6 +3084,7 @@ $("mSeg").onclick = e => { const b = e.target.closest("button"); if (b) {
 } };
 $("mQuizB").onclick = mindQuiz;
 $("lPur").oninput = e => { S.learn.purpose = e.target.value; change(); };
+$("tgWiz").onclick = desireWizard;
 $("lessonX").onclick = () => $("lessonD").close();
 $("lessonD").addEventListener("click", e => { if (e.target === $("lessonD"))
   $("lessonD").close(); });
@@ -2921,7 +3176,7 @@ function trustUI() {
 }
 $("trX").onclick = () => { LS.set("cashflow:trustMin", LS.get("cashflow:trustMin") === "1" ? "0" : "1"); trustUI(); };
 $("trMore").onclick = () => { $("setB").click(); };
-const APP_VERSION = "2.8 · 16 Oct 2026";
+const APP_VERSION = "2.9 · 26 Oct 2026";
 console.info("Cash Flow " + APP_VERSION);
 /* ---------- controls ---------- */
 $("view").onclick = e => { const b = e.target.closest("button"); if (!b)

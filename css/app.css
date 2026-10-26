@@ -4453,3 +4453,299 @@ body.locked .toast {
 .lkbox .note {
   margin-top: 14px;
 }
+
+/* ---------- Think and Grow Rich toolkit ---------- */
+.tgrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.tgbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.nx-pur p {
+  margin: 0;
+}
+
+.nx-pur .tgbar {
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.rdb, .tgwiz {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: inherit;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  transition: background .2s, transform .1s;
+}
+
+.rdb:active, .tgwiz:active {
+  transform: scale(.97);
+}
+
+.rdb.on {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.lhero .tgwiz {
+  background: rgb(255 255 255 / .14);
+  border-color: rgb(255 255 255 / .3);
+}
+
+.rds {
+  font-size: .86rem;
+  font-weight: 700;
+  opacity: .9;
+}
+
+.tgsix {
+  margin: 6px 0 14px;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.tgbig {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+  margin: 4px 0 10px;
+}
+
+.tgbig b {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.tgbig span {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+#tgDesire .gbar {
+  margin: 10px 0 4px;
+}
+
+.tgscore {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 6px 0 12px;
+}
+
+.tgscore .hint {
+  margin: 4px 0 0;
+}
+
+.tgring {
+  --p: 0;
+  flex: none;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: radial-gradient(closest-side, var(--surface) 78%, transparent 80%), conic-gradient(var(--green) calc(var(--p) * 1%), var(--line) 0);
+}
+
+.tgring b {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.tgring small {
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.tgsetp {
+  margin-top: 16px;
+}
+
+.tgalert {
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: color-mix(in srgb, var(--sand) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sand) 45%, transparent);
+  font-size: .9rem;
+}
+
+.tgadd {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tgsb {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.tgsb small {
+  color: var(--muted);
+  display: block;
+}
+
+.tgsb p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.tgsb.ok b {
+  text-decoration: line-through;
+  text-decoration-color: var(--green);
+}
+
+.tgchk {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  max-width: 110px;
+}
+
+.tgchk input {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  accent-color: var(--green);
+}
+
+.tgsb.ok .tgchk {
+  color: var(--green);
+}
+
+.wzg {
+  max-width: none;
+  margin-top: 10px;
+  font-size: .9rem;
+}
+
+.wzold {
+  display: block;
+  margin-top: 8px;
+}
+
+#playC textarea, #playC input:not([type=checkbox]):not([type=range]) {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: var(--input);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: 44px;
+}
+
+#playC textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+#playC textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px color-mix(in srgb,var(--gold) 22%,transparent);
+}
+
+.wzerr:empty {
+  display: none;
+}
+
+.gdwrap {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 16px;
+  margin: 12px 0;
+}
+
+.gdshaft {
+  position: relative;
+  height: 220px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(#8a6a45, #5a4128 60%, #3b2a1a);
+}
+
+.gdshaft i {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: 0;
+  background: rgb(0 0 0 / .45);
+  transition: height .35s var(--ease);
+}
+
+.gdshaft span {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  font-size: 1.4rem;
+  transition: top .35s var(--ease);
+}
+
+.game .cfh .cfy {
+  white-space: nowrap;
+}
+
+.gdside .cfev {
+  min-height: 3em;
+}
+
+.gdbtn {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 560px) {
+  .tgadd {
+    grid-template-columns: 1fr;
+  }
+
+  .tgrow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tgwiz {
+    width: 100%;
+  }
+
+  .tgring {
+    width: 76px;
+    height: 76px;
+  }
+
+  .gdbtn .btn {
+    flex: 1 1 100%;
+  }
+}
